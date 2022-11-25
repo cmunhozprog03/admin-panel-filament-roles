@@ -6,6 +6,7 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
@@ -17,7 +18,8 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static ?string $navigationGroup = 'Admin Manengent';
 
     public static function form(Form $form): Form
     {
@@ -32,19 +34,24 @@ class UserResource extends Resource
                     ->email()
                     ->required()
                     ->maxLength(255),
-                Forms\Components\DateTimePicker::make('email_verified_at'),
+                // Forms\Components\DateTimePicker::make('email_verified_at'),
                 Forms\Components\TextInput::make('password')
                     ->password()
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Textarea::make('two_factor_secret')
-                    ->maxLength(65535),
-                Forms\Components\Textarea::make('two_factor_recovery_codes')
-                    ->maxLength(65535),
-                Forms\Components\DateTimePicker::make('two_factor_confirmed_at'),
-                Forms\Components\TextInput::make('current_team_id'),
-                Forms\Components\TextInput::make('profile_photo_path')
-                    ->maxLength(2048),
+                CheckboxList::make('roles')
+                    ->relationship('roles', 'name')
+                    ->columns()
+                    ->helperText('Escolha um...')
+                    ->required()
+                // Forms\Components\Textarea::make('two_factor_secret')
+                //     ->maxLength(65535),
+                // Forms\Components\Textarea::make('two_factor_recovery_codes')
+                //     ->maxLength(65535),
+                // Forms\Components\DateTimePicker::make('two_factor_confirmed_at'),
+                // Forms\Components\TextInput::make('current_team_id'),
+                // Forms\Components\TextInput::make('profile_photo_path')
+                //     ->maxLength(2048),
             ]);
     }
 
@@ -52,22 +59,31 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('name')->sortable()->searchable(),
                 Tables\Columns\IconColumn::make('is_admin')
-                    ->boolean(),
-                Tables\Columns\TextColumn::make('email'),
-                Tables\Columns\TextColumn::make('email_verified_at')
-                    ->dateTime(),
-                Tables\Columns\TextColumn::make('two_factor_secret'),
-                Tables\Columns\TextColumn::make('two_factor_recovery_codes'),
-                Tables\Columns\TextColumn::make('two_factor_confirmed_at')
-                    ->dateTime(),
-                Tables\Columns\TextColumn::make('current_team_id'),
-                Tables\Columns\TextColumn::make('profile_photo_path'),
+                    ->boolean()->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('roles.name')
+                    ->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('email')
+                    ->sortable()->searchable(),
+                // Tables\Columns\TextColumn::make('email_verified_at')
+                //     ->dateTime(),
+                // Tables\Columns\TextColumn::make('two_factor_secret'),
+                // Tables\Columns\TextColumn::make('two_factor_recovery_codes'),
+                // Tables\Columns\TextColumn::make('two_factor_confirmed_at')
+                //     ->dateTime(),
+                // Tables\Columns\TextColumn::make('current_team_id'),
+                // Tables\Columns\TextColumn::make('profile_photo_path'),
+                Tables\Columns\TextColumn::make('deleted_at')
+                    ->dateTime('d/m/y')
+                    ->sortable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime(),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime(),
+                    ->dateTime('d/m/y')
+                    ->sortable()
+                    ->searchable(),
+                // Tables\Columns\TextColumn::make('updated_at')
+                //     ->dateTime(),
             ])
             ->filters([
                 //
